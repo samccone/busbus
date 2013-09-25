@@ -10,24 +10,38 @@ var UPDATE_FREQUENCY = 10;
 exports.vehicles = [];
 exports.trips = [];
 
-exports.syncVehicles = function() {
+var sync = {},
+    tickCount = -1;
+
+sync.vehicles = function() {
   request.get('http://developer.mbta.com/lib/gtrtfs/Vehicles.pb', {
     encoding: null
   }, function(e, r, b) {
     exports.vehicles = Transit.FeedMessage.decode(r.body).entity;
-
-    setTimeout(exports.syncVehicles, 1000 * UPDATE_FREQUENCY);
+    console.log(exports.vehicles.length);
   });
 }
 
-exports.syncTrips = function() {
+sync.trips = function() {
   request.get('http://developer.mbta.com/lib/gtrtfs/Passages.pb', {
     encoding: null
   }, function(e, r, b) {
     exports.trips = Transit.FeedMessage.decode(r.body).entity;
-
-    setTimeout(exports.syncTrips, 1000 * UPDATE_FREQUENCY);
+    console.log(exports.trips.length);
   });
+}
+
+function tick() {
+  var methods = Object.keys(sync);
+  var method  = methods[++tickCount % methods.length];
+
+  sync[method]();
+
+  setTimeout(tick, 1000 * UPDATE_FREQUENCY);
+}
+
+exports.poll = function() {
+  tick();
 }
 
 exports.vehicleNear = function (options) {

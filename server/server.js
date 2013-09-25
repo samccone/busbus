@@ -24,11 +24,10 @@ app.get('/busses', function(req, res) {
   res.json(results || garage.vehicles);
 });
 
-// app.get('/trips', function(req, res) {
-//   res.json(garage.trips);
-// });
+app.get('/trips', function(req, res) {
+  res.json(garage.trips);
+});
 
-garage.syncVehicles();
-// garage.syncTrips();
+garage.poll();
 
 console.log("BusBus server running on port " + PORT);
