@@ -21,7 +21,7 @@ app.get('/busses', function(req, res) {
     });
   }
 
-  res.json(results || garage.vehicles);
+  res.json(results || garage.listings);
 });
 
 app.get('/trips', function(req, res) {
